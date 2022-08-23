@@ -8,7 +8,7 @@ struct Home: Hashable {
     let details: String // example: "3 Beds | 1 Bath | 900 Sqft"
 }
 
-var searchResults = [Home]()
+private var searchResults = [Home]()
 
 func getSearchResults(city: String, region_code: String) throws -> Array<Home>  {
 let url = URL(string:"https://www.affordablehousing.com/\(city.lowercased())-\(region_code.lowercased())/")!
@@ -29,7 +29,6 @@ while (nextSearchResult.hasClass("tnresult--card")) {
     // price
     var price = ""
     price = try nextSearchResult.getElementsByClass("tnresult--price").text()
-    
     // details
     var details = ""
     details = try nextSearchResult.getElementsByClass("tnresult--bedbath").text()

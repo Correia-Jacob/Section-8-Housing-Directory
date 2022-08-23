@@ -5,9 +5,10 @@ import SwiftSoup
 
 
 struct ContentView: View {
-    @StateObject private var mapAPI = MapAPI()
-    @State var searchResults = try! getSearchResults(city: "detroit", region_code: "mi")
+    @StateObject private var mapAPI = MapAPI(city: "detroit", region_code: "mi")
+    @State private var searchResults = try! getSearchResults(city: "detroit", region_code: "mi")
     @State private var text = ""
+    
     var body: some View {
         NavigationView {
         VStack {
@@ -17,7 +18,7 @@ struct ContentView: View {
                                 .padding(.horizontal)
                                 .onSubmit {
                                     mapAPI.getLocation(address: text, delta: 0.5)
-                                    searchResults = try! getSearchResults(city: mapAPI.city, region_code: mapAPI.region_code)
+                                    searchResults = try! getSearchResults(city: mapAPI.getCity(), region_code: mapAPI.getRegion_Code())
                                 }
                                 .frame(width: 340, height: 40, alignment: .top)
                 Image(systemName: "text.justify")
