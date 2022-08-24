@@ -3,10 +3,10 @@ import MapKit
 import Foundation
 import SwiftSoup
 
+var searchResults = try! getSearchResults(city: "detroit", region_code: "mi")
 
 struct ContentView: View {
     @StateObject private var mapAPI = MapAPI(city: "detroit", region_code: "mi")
-    @State private var searchResults = try! getSearchResults(city: "detroit", region_code: "mi")
     @State private var text = ""
     
     var body: some View {
@@ -17,8 +17,9 @@ struct ContentView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .padding(.horizontal)
                                 .onSubmit {
-                                    mapAPI.getLocation(address: text, delta: 0.5)
-                                    searchResults = try! getSearchResults(city: mapAPI.getCity(), region_code: mapAPI.getRegion_Code())
+                                    mapAPI.displayLocation(address: text) { () -> Void in
+                                        updateSearchResults(city: mapAPI.getCity(), region_code: mapAPI.getRegion_Code())
+                                    }
                                 }
                                 .frame(width: 340, height: 40, alignment: .top)
                 Image(systemName: "text.justify")
@@ -26,7 +27,7 @@ struct ContentView: View {
             }
                 Map(coordinateRegion: $mapAPI.region, annotationItems: mapAPI.locations) {
                     location in
-                    MapMarker(coordinate: location.coordinate, tint: .gray)
+                    MapMarker(coordinate: location.coordinate, tint: .blue)
                 }
             ZStack {
                 Color.white
@@ -199,7 +200,7 @@ struct ContentView: View {
             
             List {
                 Section {
-                  ForEach(searchResults, id: \.self) { result in
+                    ForEach(searchResults.reversed(), id: \.self) { result in
                       NavigationLink(destination: resultView(address: result.address, price: result.price, details: result.details, imageUrl: result.image)) {
                           Text(result.address)
                           }
@@ -275,6 +276,7 @@ struct resultView: View {
                 .background(Color.blue)
                 .cornerRadius(8)
                 .frame(width: 350, alignment: .topTrailing)
+                
             }
             
         }
@@ -282,7 +284,7 @@ struct resultView: View {
          .navigationBarHidden(false)
          .navigationBarBackButtonHidden(false)
             
-    }
+                        }
     
 }
 
@@ -309,4 +311,8 @@ struct RoundedCorner: Shape {
         let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         return Path(path.cgPath)
     }
+}
+
+func updateSearchResults(city: String, region_code: String) {
+    searchResults = try! getSearchResults(city: city, region_code: region_code)
 }
