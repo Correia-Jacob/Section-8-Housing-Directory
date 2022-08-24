@@ -228,6 +228,7 @@ struct resultView: View {
     var imageUrl: String
 
     var body: some View {
+        ScrollView {
         VStack {
             Text(address)
                 .font(.system(size: 23))
@@ -236,8 +237,8 @@ struct resultView: View {
                 url: URL(string: imageUrl),
                 content: { image in
                     image.resizable()
-                         .aspectRatio(contentMode: .fit)
-                         .frame(width: 400, height: 350)
+                         .aspectRatio(contentMode: .fill)
+                         .frame(width: 450, height: 500)
                 },
                 placeholder: {
                     ProgressView()
@@ -255,7 +256,7 @@ struct resultView: View {
                         .frame(width: 300, height: 25, alignment: .topLeading)
                 }
                 HStack {
-                    Text("Phone/Email:")
+                    Text("Email:")
                     TextField("", text: $contact)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 280, height: 25, alignment: .topLeading)
@@ -278,14 +279,13 @@ struct resultView: View {
                 .frame(width: 350, alignment: .topTrailing)
                 
             }
-            
         }
          .navigationBarTitle("")
          .navigationBarHidden(false)
          .navigationBarBackButtonHidden(false)
             
                         }
-    
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
